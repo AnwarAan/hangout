@@ -25,3 +25,5 @@ api/db.json
 *.njsproj
 *.sln
 *.sw?
+
+backup
