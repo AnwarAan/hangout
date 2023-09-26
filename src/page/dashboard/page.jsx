@@ -1,17 +1,16 @@
-import Navbar from "./components/navbar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useEffect } from "react"
-import Overview from "./components/overview"
-import Events from "./components/events/page"
+import Navbar from "./components/navbar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect } from "react";
+import Overview from "./components/overview";
+import Events from "./components/events/page";
 
 const Dashboard = () => {
-
   useEffect(() => {
-    document.documentElement.classList.add('light')
-  }, [])
+    document.documentElement.classList.add("light");
+  }, []);
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="xl:w-[1280px] mx-auto text-foreground">
         <div className="mt-4">
@@ -29,12 +28,10 @@ const Dashboard = () => {
               <Events />
             </TabsContent>
           </Tabs>
-
-
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

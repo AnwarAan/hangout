@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import Category from "../components/event/Category";
 import EventCard from "@/components/event/EventCard";
-// import UserCard from "@/components/event/UserCard"
+import UserCard from "@/components/event/UserCard";
 
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -18,9 +18,34 @@ import useToken from "@/hooks/useToken";
 
 const tabs = ["All", "Online", "Today", "This Week", "Free"];
 
+const MyEvent = () => {
+  const { userId } = useToken();
+
+  const {
+    data: user,
+    isLoading,
+    isSuccess,
+  } = useQuery(["event-user"], async () => {
+    try {
+      const res = await getAPI(`user/event/${userId}`);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  });
+
+  return (
+    <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
+      {isLoading ? (
+        <Skeleton className="bg-secondary w-[260px] h-[100px]" />
+      ) : (
+        user[0].events.map((event) => <UserCard key={event.id} event={event} />)
+      )}
+    </div>
+  );
+};
+
 const Home = () => {
-  // const { showBoundary } = useErrorBoundary();
-  // const { isLogin, userId } = useAuth();
   const { isLogin } = useToken();
   const [tab, setTab] = useState("All");
 
@@ -174,6 +199,8 @@ const Home = () => {
                 </Link>
               </span>
             </div>
+
+            {isLogin ? <MyEvent /> : ""}
             {/* <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
               {userEvent && userEvent.slice(0, 3).map((event) => <UserCard key={event.id} event={event} />)}
             </div> */}

@@ -8,7 +8,7 @@ const App = () => {
       <div className="">
         <Header />
       </div>
-      <div className="mt-20">{<Outlet />}</div>
+      <div className="w-full px-14 md:px-20 lg:px-0 lg:w-[1280px] mx-auto mt-20">{<Outlet />}</div>
     </Fragment>
   );
 };

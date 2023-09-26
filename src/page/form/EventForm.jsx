@@ -21,6 +21,7 @@ import LocationField from "@/page/form/components/LocationField";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { postAPI } from "@/api/api.js";
+import useToken from "@/hooks/useToken.jsx";
 
 const emptyForm = {
   name: "",
@@ -46,7 +47,7 @@ const emptyForm = {
 const EventForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-
+  const { userId } = useToken();
   // const [tag, setTag] = useState("");
   // const [tags, setTags] = useState([]);
   const [type, setType] = useState("free");
@@ -78,8 +79,9 @@ const EventForm = () => {
       regency: values.location.regency,
       district: values.location.district,
       address: values.location.address,
-      date: Date.now(),
+      date: new Date(values.date).getTime(),
       time: `${values.time.hours}:${values.time.minutes} ${values.time.type.toUpperCase()}`,
+      userId: userId,
     });
   };
 

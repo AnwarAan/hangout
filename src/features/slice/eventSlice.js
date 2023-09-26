@@ -2,9 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isSearch: false,
-}
-
-
+};
 
 export const eventSlice = createSlice({
   name: "event",
@@ -12,13 +10,12 @@ export const eventSlice = createSlice({
   reducers: {
     toggleSearch: (state, action) => {
       if (!state.isSearch) {
-        state.searchEvents = []
+        state.searchEvents = [];
       }
-      state.isSearch = action.payload
+      state.isSearch = action.payload;
     },
-
   },
-})
+});
 
-export const { toggleSearch } = eventSlice.actions
-export default eventSlice.reducer
+export const { toggleSearch } = eventSlice.actions;
+export default eventSlice.reducer;

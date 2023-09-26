@@ -7,10 +7,12 @@ import { formatToUnits } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
+import useToken from "@/hooks/useToken";
 
 const EventCard = ({ event }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   // const { userId } = useAuth();
+  const { userId } = useToken;
 
   const eventMutation = useMutation({
     mutationFn: async (event) => {
@@ -18,15 +20,14 @@ const EventCard = ({ event }) => {
     },
   });
 
-  // const { data: currentUser, isFetched } = useQuery({
-  //   queryKey: ['user', userId],
-  //   queryFn: async () => {
-  //     const res = await services.get(`/users/${userId}`)
-  //     return res.data
-  //   },
-  //   enabled: !!userId
-
-  // })
+  const { data: currentUser, isFetched } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: async () => {
+      const res = await services.get(`/users/${userId}`);
+      return res.data;
+    },
+    enabled: !!userId,
+  });
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
