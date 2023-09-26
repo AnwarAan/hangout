@@ -22,6 +22,7 @@ import CommentSection from "./components/CommentSection";
 import Comment from "./components/Comment";
 import useToken from "@/hooks/useToken";
 import { getAPI } from "@/api/api";
+import ShareEvent from "./components/Share";
 
 const EventDetails = () => {
   const { eventId } = useParams();
@@ -235,10 +236,10 @@ const EventDetails = () => {
                 <p className="font-bold">Tags</p>
                 <span className="space-x-2">
                   {/* {event.tags.map((tag) => (
-                      <Badge className="cursor-pointer" key={tag}>
-                        {tag}
-                      </Badge>
-                    ))} */}
+                    <Badge className="cursor-pointer" key={tag}>
+                      {tag}
+                    </Badge>
+                  ))} */}
                 </span>
               </span>
             </div>
@@ -246,7 +247,14 @@ const EventDetails = () => {
           <div className="order-1 md:order-2 flex flex-col self-start gap-4 w-full md:w-max">
             <span className="flex items-center gap-4 self-end">
               <Heart className="w-6 h-6 cursor-pointer" />
-              <Share className="w-6 h-6 cursor-pointer" />
+              <Dialog>
+                <DialogTrigger>
+                  <Share className="w-6 h-6 cursor-pointer" />
+                </DialogTrigger>
+                <DialogContent>
+                  <ShareEvent />
+                </DialogContent>
+              </Dialog>
             </span>
             <div className="md:border md:border-border rounded-md w-full md:w-[250px] justify-between py-3 gap-2 md:px-6 md:py-4 flex flex-row md:flex-col items-center h-max">
               {discount > 0 ? (
