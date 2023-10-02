@@ -24,22 +24,20 @@ const MyEvent = () => {
   const {
     data: user,
     isLoading,
-    isSuccess,
+    isFetched: userFetched,
   } = useQuery(["event-user"], async () => {
-    try {
-      const res = await getAPI(`user/event/${userId}`);
-      return res.data;
-    } catch (error) {
-      throw new Error(error.response.data.message);
-    }
+    const res = await getAPI(`user/${userId}`);
+    return res.data;
   });
 
   return (
     <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
       {isLoading ? (
         <Skeleton className="bg-secondary w-[260px] h-[100px]" />
+      ) : userFetched && user.events.length > 0 ? (
+        user.events.map((event) => <UserCard key={event.id} event={event} />)
       ) : (
-        user[0].events.map((event) => <UserCard key={event.id} event={event} />)
+        <Skeleton />
       )}
     </div>
   );
@@ -50,12 +48,8 @@ const Home = () => {
   const [tab, setTab] = useState("All");
 
   const { data, isLoading } = useQuery(["events"], async () => {
-    try {
-      const res = await getAPI("event");
-      return res.data;
-    } catch (error) {
-      throw new Error(error.response.data.message);
-    }
+    const res = await getAPI("event");
+    return res.data;
   });
 
   // const { data: today, isLoading: todayLoading } = useQuery(["events"], async () => {

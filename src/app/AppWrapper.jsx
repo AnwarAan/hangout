@@ -14,10 +14,13 @@ const MyReferals = lazy(() => import("../page/profile/page/myReferals"));
 const MyFavorites = lazy(() => import("../page/profile/page/myFavorites"));
 const EventDetails = lazy(() => import("../page/event/EventDetails"));
 const Dashboard = lazy(() => import("../page/dashboard/page"));
+const VerifyEmail = lazy(() => import("../components/auth/VerifyEmail"));
+const SendEmail = lazy(() => import("../components/auth/SendEmail"));
+const ResetPassword = lazy(() => import("../components/auth/ResetPassword"));
 const ErrorPage = lazy(() => import("../page/ErrorPage"));
+
 const AppWrapper = () => {
-  const { token, setToken } = useToken();
-  console.log("token", token);
+  const { setToken } = useToken();
 
   return (
     <Fragment>
@@ -39,12 +42,15 @@ const AppWrapper = () => {
 
             <Route path="/event/:eventId" element={<EventDetails />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/send-email" element={<SendEmail />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<ErrorPage />} />
 
             <Route path="/profile/" element={<Profile />}>
-              {/* <Route path="my-events" element={<MyEvent />} /> */}
+              <Route path="my-events" element={<MyEvent />} />
               <Route path="my-referals" element={<MyReferals />} />
-              {/* <Route path="my-favorites" element={<MyFavorites />} /> */}
+              <Route path="my-favorites" element={<MyFavorites />} />
             </Route>
           </Route>
         </Routes>

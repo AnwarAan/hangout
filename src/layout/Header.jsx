@@ -1,10 +1,11 @@
 import { toggleSearch } from "@/features/slice/eventSlice";
 import { Switch } from "@/components/ui/switch";
-import { CalendarDays, LayoutDashboard, LogOut, Plus, Search, Ticket } from "lucide-react";
+import { CalendarDays, LayoutDashboard, LogOut, Plus, Search, Ticket, Wallet } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { FormatToIDR } from "@/lib/utils";
 
 import {
   DropdownMenu,
@@ -27,11 +28,12 @@ const UserProfile = () => {
     const res = await getAPI(`user/${userId}`);
     return res.data;
   });
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar className="ring-2 ring-primary">
-          <AvatarImage className="object-cover" src={isFetched && user.imageUrl ? user.imageUrl : ""} />
+          <AvatarImage className="object-cover" src={isFetched && user.image_url ? user.image_url : ""} />
           <AvatarFallback>PM</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -50,7 +52,7 @@ const UserProfile = () => {
           <DropdownMenuSeparator />
           <span className="flex gap-2 items-center">
             <p>My Points</p>
-            <Badge className="bg-primary hover:bg-primary/80 cursor-pointer">{isFetched && user.points}</Badge>
+            <Badge className="bg-primary hover:bg-primary/80 cursor-pointer">{isFetched && user.point}</Badge>
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -71,6 +73,10 @@ const UserProfile = () => {
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="flex gap-2 items-center">
+          <Wallet className="w-4 h-4" />
+          <span>{FormatToIDR(isFetched && user.balance)}</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="flex gap-2 items-center mt-6">

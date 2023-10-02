@@ -30,8 +30,8 @@ const Login = ({ setToken }) => {
   });
 
   const mutation = useMutation({
-    mutationFn: async (newEvents) => {
-      const res = await postAPI("user/login", newEvents);
+    mutationFn: async (login) => {
+      const res = await postAPI("user/login", login);
       setToken(res.data);
     },
   });
@@ -88,6 +88,12 @@ const Login = ({ setToken }) => {
                     </FormItem>
                   )}
                 />
+
+                <div className="flex justify-end">
+                  <Link className="text-sm text-blue-700" to="/send-email">
+                    forgot password
+                  </Link>
+                </div>
 
                 <div className="flex justify-center">
                   <Button

@@ -20,14 +20,14 @@ const EventCard = ({ event }) => {
     },
   });
 
-  const { data: currentUser, isFetched } = useQuery({
-    queryKey: ["user", userId],
-    queryFn: async () => {
-      const res = await services.get(`/users/${userId}`);
-      return res.data;
-    },
-    enabled: !!userId,
-  });
+  // const { data: currentUser, isFetched } = useQuery({
+  //   queryKey: ["user", userId],
+  //   queryFn: async () => {
+  //     const res = await services.get(`/users/${userId}`);
+  //     return res.data;
+  //   },
+  //   enabled: !!userId,
+  // });
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -40,7 +40,6 @@ const EventCard = ({ event }) => {
   };
 
   // const userFavoriteId = isFetched ? currentUser.favorites.filter(id => event.id === id).length > 0 : false
-
   return (
     <div className="rounded-lg bg-background shadow-sm border border-border  w-full z-[1]">
       <div className="flex items-start justify-between p-2">

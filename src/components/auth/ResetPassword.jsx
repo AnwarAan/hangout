@@ -4,35 +4,39 @@ import { Form, FormControl, FormLabel, FormItem, FormField } from "@/components/
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { FormMessage } from "@/components/ui/form";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
-import { registerSchema } from "@/schema";
+import { resetPasswordSchema } from "../../schema/index";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import { postAPI } from "@/api/api";
+import { putAPI } from "@/api/api";
+import { useSearchParams } from "react-router-dom";
 
-const Register = () => {
+const ResetPassword = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const userId = searchParams.get("userId");
+
   const { toast } = useToast();
   const navigate = useNavigate();
+
   const initForm = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
+    newPassword: "",
+    confirmPassword: "",
   };
 
   const form = useForm({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: initForm,
   });
 
   const mutation = useMutation({
-    mutationFn: async (register) => {
-      return postAPI("user/register", register);
+    mutationFn: async (setPassword) => {
+      console.log(setPassword);
+      await putAPI(`user/${userId}`, setPassword, token);
     },
   });
 
@@ -48,15 +52,20 @@ const Register = () => {
     }
   }, [form]);
 
-  if (mutation.isSuccess) return navigate("/login");
   const formSuccess = mutation.isSuccess ? { title: "Success", desc: "Event sucessfully created." } : {};
+
+  if (mutation.isSuccess) {
+    setTimeout(() => {
+      navigate("/");
+    }, 2000);
+  }
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <div>
         <span className="flex items-center gap-2 mb-6">
           <ArrowLeft className="w-6 h-6" onClick={() => navigate("/")} />
-          <Label className="font-bold text-sm">Register</Label>
+          <Label className="font-bold text-sm">Reset Password</Label>
         </span>
         <Form {...form}>
           <form action="" onSubmit={form.handleSubmit(onSubmit, (err) => console.log(err))}>
@@ -64,12 +73,12 @@ const Register = () => {
               <div className="w-full space-y-4">
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="newPassword"
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-3">
-                      <FormLabel htmlFor="firstName">First Name</FormLabel>
+                      <FormLabel htmlFor="newPassword">New Password</FormLabel>
                       <FormControl>
-                        <Input type="text" id="firstName" placeholder="first_name" {...field} />
+                        <Input type="password" id="newPassword" placeholder="******" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -78,40 +87,12 @@ const Register = () => {
 
                 <FormField
                   control={form.control}
-                  name="lastName"
+                  name="confirmPassword"
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-3">
-                      <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                      <FormLabel htmlFor="confirmpassword">Confirm Password</FormLabel>
                       <FormControl>
-                        <Input type="text" id="lastName" placeholder="last_name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col gap-3">
-                      <FormLabel htmlFor="email">Emaill</FormLabel>
-                      <FormControl>
-                        <Input type="email" id="email" placeholder="example@mail.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col gap-3">
-                      <FormLabel htmlFor="password">Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" id="password" placeholder="******" {...field} />
+                        <Input type="password" id="confirmpassword" placeholder="******" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -130,22 +111,32 @@ const Register = () => {
                     }
                   >
                     {mutation.isLoading && <Loader2 className={`animate-spin w-4 h-4`} />}
-                    {mutation.isLoading ? "login..." : "Register"}
+                    {mutation.isLoading ? "submit..." : "Submit"}
                   </Button>
-                </div>
-
-                <div className="flex justify-center items-center">
-                  <FormLabel>Already have an account</FormLabel>
-                  <Link className="ms-2 font-light text-blue-700 text-sm" to="/login">
-                    here
-                  </Link>
                 </div>
               </div>
             </div>
+            {mutation.error && (
+              <div className="mt-2">
+                <div className="flex items-center gap-2 p-2 bg-red-100 rounded-full text-red-600 justify-center">
+                  <p>{mutation?.error?.response?.data.message}</p>
+                  <Check className="h-4 w-4" />
+                </div>
+              </div>
+            )}
+
+            {mutation.isSuccess && (
+              <div className="mt-2">
+                <div className="flex items-center gap-2 p-2 bg-green-100 rounded-full text-green-600 justify-center">
+                  <p>Success</p>
+                  <Check className="h-4 w-4" />
+                </div>
+              </div>
+            )}
           </form>
         </Form>
       </div>
     </div>
   );
 };
-export default Register;
+export default ResetPassword;

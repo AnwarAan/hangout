@@ -20,7 +20,7 @@ import LocationField from "@/page/form/components/LocationField";
 
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import { postAPI } from "@/api/api.js";
+import { postAPIFormData } from "@/api/api.js";
 import useToken from "@/hooks/useToken.jsx";
 
 const emptyForm = {
@@ -42,6 +42,7 @@ const emptyForm = {
   type: "free",
   price: "",
   tags: [],
+  file: "",
 };
 
 const EventForm = () => {
@@ -54,7 +55,7 @@ const EventForm = () => {
 
   const mutation = useMutation({
     mutationFn: async (newEvents) => {
-      return postAPI("event", newEvents);
+      return postAPIFormData("event", newEvents);
     },
   });
 
@@ -69,8 +70,14 @@ const EventForm = () => {
     }
   }, [form]);
 
+  const handleChange = (name, value) => {
+    form.setValue(name, value);
+  };
+
   const onSubmit = (values) => {
     // setTags([]);
+    const formData = new FormData();
+    formData.append("file", values.file);
     mutation.mutate({
       ...values,
       price: values.type === "free" ? 0 : values.price,
@@ -96,14 +103,13 @@ const EventForm = () => {
   const formSuccess = mutation.isSuccess ? { title: "Success", desc: "Event sucessfully created." } : {};
 
   return (
-    // <Container>
     <div className="w-full space-y-4 border rounded-md p-4">
       <span className="flex items-center gap-2">
         <ArrowLeft className="w-6 h-6" onClick={() => navigate(-1)} />
         <h2 className="font-bold text-lg">Lets create your event</h2>
       </span>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit, (err) => console.log(err))}>
+        <form onSubmit={form.handleSubmit(onSubmit, (err) => console.log(err))} encType="multipart/form-data">
           <div className="flex gap-4 w-full">
             <div className="w-full space-y-4">
               <FormField
@@ -119,7 +125,7 @@ const EventForm = () => {
                   </FormItem>
                 )}
               />
-              {/* location form control  */}
+
               <LocationField form={form} />
 
               <FormField
@@ -198,6 +204,7 @@ const EventForm = () => {
                     )}
                   />
                 )}
+
                 <FormField
                   control={form.control}
                   name="category"
@@ -272,6 +279,27 @@ const EventForm = () => {
                   </span>
                 </div>
               </div> */}
+
+              <FormField
+                control={form.control}
+                name="file"
+                render={() => (
+                  <FormItem className="flex flex-col gap-3">
+                    <FormLabel htmlFor="name">Select File</FormLabel>
+                    <FormControl>
+                      <Input
+                        // name="file"
+                        type="file"
+                        id="file"
+                        placeholder=""
+                        form={form}
+                        onChange={(value) => handleChange("file", value.target.files[0])}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
           <Button
@@ -290,7 +318,6 @@ const EventForm = () => {
         </form>
       </Form>
     </div>
-    // </Container>
   );
 };
 

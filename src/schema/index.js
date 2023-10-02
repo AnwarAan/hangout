@@ -1,5 +1,8 @@
 import * as z from "zod";
 
+const MAX_FILE_SIZE = 3000000;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/heic", "file/pdf"];
+
 export const formSchema = z.object({
   name: z
     .string()
@@ -25,10 +28,14 @@ export const formSchema = z.object({
   price: z.string().optional(),
   category: z.string(),
   tags: z.string().array(),
+  file: z
+    .any()
+    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 3MB.`)
+    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file?.type), "Only .jpg, .jpeg, .png and .pdf"),
 });
 
 export const eventRegisterSchema = z.object({
-  referal: z.string().optional(),
+  referral: z.string().optional(),
   firstName: z.string().min(2),
   lastName: z.string().min(2),
   email: z.string().email(),
@@ -66,6 +73,21 @@ export const registerSchema = z.object({
     message: "Minimun 2 character",
   }),
   password: z.string().min(6, {
+    message: "Minimun 6 character",
+  }),
+});
+
+export const sendEmailSchema = z.object({
+  email: z.string().email("This is not a valid email.").min(2, {
+    message: "Minimun 2 character",
+  }),
+});
+
+export const resetPasswordSchema = z.object({
+  newPassword: z.string().min(6, {
+    message: "Minimun 6 character",
+  }),
+  confirmPassword: z.string().min(6, {
     message: "Minimun 6 character",
   }),
 });
