@@ -1,62 +1,63 @@
 // import Container from "../components/layout/Container"
-import { ChevronRight } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import Category from "../components/event/Category";
-import EventCard from "@/components/event/EventCard";
-import UserCard from "@/components/event/UserCard";
+import { ChevronRight } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+import Category from "../components/event/Category"
+import EventCard from "@/components/event/EventCard"
+import UserCard from "@/components/event/UserCard"
 
-import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { Link } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
 // import { useQueryCache } from "@/hooks/useQueryCache";
-import { categories } from "../../constant/index.jsx";
-import { Skeleton } from "@/components/ui/skeleton";
-import NoResources from "@/components/shared/NoResources";
+import { categories } from "../../constant/index.jsx"
+import { Skeleton } from "@/components/ui/skeleton"
+import NoResources from "@/components/shared/NoResources"
 
-import { getAPI } from "@/api/api";
-import useToken from "@/hooks/useToken";
+import { getAPI } from "@/api/api"
+import useToken from "@/hooks/useToken"
 
-const tabs = ["All", "Online", "Today", "This Week", "Free"];
+const tabs = ["All", "Online", "Today", "This Week", "Free"]
 
 const MyEvent = () => {
-  const { userId } = useToken();
+  const { userId } = useToken()
 
   const {
     data: user,
     isLoading,
-    isSuccess,
+    isFetched: userFetched,
   } = useQuery(["event-user"], async () => {
     try {
-      const res = await getAPI(`user/event/${userId}`);
-      return res.data;
+      const res = await getAPI(`user/${userId}`)
+      return res.data
     } catch (error) {
-      throw new Error(error.response.data.message);
+      throw new Error(error.response.data.message)
     }
-  });
-
+  })
   return (
     <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
       {isLoading ? (
         <Skeleton className="bg-secondary w-[260px] h-[100px]" />
+      ) : userFetched && user.events.length > 0 ? (
+        user.events.map((event) => <UserCard key={event.id} event={event} />)
       ) : (
-        user[0].events.map((event) => <UserCard key={event.id} event={event} />)
+        <Skeleton />
       )}
     </div>
-  );
-};
+  )
+}
 
 const Home = () => {
-  const { isLogin } = useToken();
-  const [tab, setTab] = useState("All");
+  const { isLogin } = useToken()
+  const [tab, setTab] = useState("All")
 
   const { data, isLoading } = useQuery(["events"], async () => {
     try {
-      const res = await getAPI("event");
-      return res.data;
+      const res = await getAPI("event")
+      return res.data
     } catch (error) {
-      throw new Error(error.response.data.message);
+      throw new Error(error.response.data.message)
     }
-  });
+  })
 
   // const { data: today, isLoading: todayLoading } = useQuery(["events"], async () => {
   //   const res = await getAPI("event");
@@ -80,11 +81,15 @@ const Home = () => {
 
   // const { data: userEvent } = useQueryCache(`event/${userId}`, "/user", { id: userId }, true);
 
-  useEffect(() => {}, []);
+  useEffect(() => {}, [])
 
   return (
     // <Container>
-    <div className={`flex flex-col w-full items-center ${isLogin && "lg:flex-row"}`}>
+    <div
+      className={`flex flex-col w-full items-center ${
+        isLogin && "lg:flex-row"
+      }`}
+    >
       <div
         className={`${
           isLogin
@@ -92,13 +97,26 @@ const Home = () => {
             : "w-[640px] lg:w-[calc((100%_-_350px)_-_45px)] mr-0 lg:mr-[45px] h-[1000px] px-6 sm:p-2"
         }`}
       >
-        <div className={`flex overflow-x-auto gap-4 lg:w-full justify-between ${isLogin ? "w-[1280px]" : "w-[640px]"}`}>
+        <div
+          className={`flex overflow-x-auto gap-4 lg:w-full justify-between ${
+            isLogin ? "w-[1280px]" : "w-[640px]"
+          }`}
+        >
           {categories.map((category) => (
-            <Category key={category.value} imgUrl="/placeholder.jpeg" category={category} />
+            <Category
+              key={category.value}
+              imgUrl="/placeholder.jpeg"
+              category={category}
+            />
           ))}
         </div>
         <div className="mt-8">
-          <Tabs defaultValue="All" value={tab} onValueChange={setTab} className="w-full">
+          <Tabs
+            defaultValue="All"
+            value={tab}
+            onValueChange={setTab}
+            className="w-full"
+          >
             <TabsList className="flex justify-start gap-2 bg-backround text-primary">
               {tabs.map((tab) => (
                 <TabsTrigger
@@ -194,7 +212,10 @@ const Home = () => {
             <div className="rounded-md shadow-sm bg-background p-2 w-full">
               <span className="flex gap-2 items-end justify-between">
                 <h4 className="text-lg font-bold">My Events</h4>
-                <Link className="flex gap-1 items-center text-sm text-slate-500" to="/profile/my-events/">
+                <Link
+                  className="flex gap-1 items-center text-sm text-slate-500"
+                  to="/profile/my-events/"
+                >
                   See All <ChevronRight size={20} />
                 </Link>
               </span>
@@ -209,7 +230,7 @@ const Home = () => {
       )}
     </div>
     // </Container>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -7,10 +7,9 @@ import {
 } from "react-share"
 import { EmailIcon, FacebookIcon, TwitterIcon, WhatsappIcon } from "react-share"
 
-const Share = (/*{ tittle, url }*/) => {
-  const shareUrl = "https://example.com/event"
-  const shareTitle = "Event 1"
-
+const Share = ({ title }) => {
+  const shareUrl = window.location.href
+  const shareTitle = `Join us on ${title} Event !`
   const [copySuccess, setCopySuccess] = useState(false)
 
   const handleCopyClick = async () => {
@@ -26,7 +25,7 @@ const Share = (/*{ tittle, url }*/) => {
 
   return (
     <div className="py-2 overflow-x-hidden">
-      <h3 className="text-xl font-semibold">Share Event</h3>
+      <h3 className="text-xl font-semibold">Share Event : {title}</h3>
       <span className="flex overflow-x-auto my-4">
         <EmailShareButton url={shareUrl} subject={shareTitle} className="mr-4">
           <EmailIcon iconFillColor="white" round={true} />
