@@ -1,20 +1,21 @@
-import { useQueryCache } from "@/hooks/useQueryCache"
-import { useAuth } from "@clerk/clerk-react"
-import MyEventCard from "./components/MyEventCard"
+import MyEventCard from "./components/MyEventCard";
+import useToken from "@/hooks/useToken";
+import { useQuery } from "@tanstack/react-query";
+import { getAPI } from "@/api/api";
 
 const MyEvent = () => {
-  const { userId } = useAuth()
+  const { userId } = useToken();
 
-  const { data: userEvent } = useQueryCache(`event/${userId}`, '/user', { id: userId }, true)
-  return (
-    <>
-      {
-        userEvent && userEvent.map(event => (
-          <MyEventCard key={event.id} event={event} />
-        ))
-      }
-    </>
-  )
-}
+  const { data: user, isFetched } = useQuery(
+    ["user-event"],
+    async () => {
+      const res = await getAPI(`user/${userId}`);
+      return res.data;
+    },
+    { refetchInterval: 2000 }
+  );
 
-export default MyEvent
+  return <div>{isFetched && user.events.map((event) => <MyEventCard key={event.id} event={event} />)}</div>;
+};
+
+export default MyEvent;

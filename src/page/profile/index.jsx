@@ -1,10 +1,8 @@
-import Container from "@/components/layout/Container";
 import { Calendar, Heart, Ticket } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 
 const Profile = () => {
   return (
-    // <Container>
     <div className="flex border rounded-md h-[calc(100vh_-_100px)]">
       <div className="w-[300px] bg-secondary rounded-l-md pl-2 py-2">
         <ul className="mt-6 text-foreground">
@@ -46,7 +44,6 @@ const Profile = () => {
         </div>
       </div>
     </div>
-    // </Container>
   );
 };
 

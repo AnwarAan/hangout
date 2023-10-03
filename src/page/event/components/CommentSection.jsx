@@ -23,7 +23,6 @@ const CommentSection = ({ event, isChild }) => {
       review: "",
     },
   });
-
   const { data: user, isFetched: userFetched } = useQuery({
     queryKey: ["user", userId],
     queryFn: async () => {
@@ -40,12 +39,14 @@ const CommentSection = ({ event, isChild }) => {
   });
 
   const onSubmit = (values) => {
-    mutate({
-      ...values,
-      rating: rating,
-      eventId: event.id,
-      userId: userId,
-    });
+    if (isLogin) {
+      mutate({
+        ...values,
+        rating: rating,
+        eventId: event.id,
+        userId: userId,
+      });
+    }
   };
 
   useEffect(() => {
@@ -60,12 +61,13 @@ const CommentSection = ({ event, isChild }) => {
   const handleRating = (value) => {
     setRating(value);
   };
+
   return (
     <div className="p-2 flex gap-4">
       <Avatar className="w-7 h-7">
         <AvatarImage
           src={isLogin ? userFetched && user.image_url : ""}
-          alt={isLogin ? userFetched && user.fullName : "user avatar"}
+          alt={isLogin ? userFetched && user.full_name : "user avatar"}
         />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
@@ -88,7 +90,13 @@ const CommentSection = ({ event, isChild }) => {
             <Button className="bg-secondary hover:bg-secondary text-muted-foreground border rounded-full">
               Cancel
             </Button>
-            <Button className="bg-primary hover:bg-primary/80 rounded-full">
+            <Button
+              className={`${
+                isLogin
+                  ? "bg-primary hover:bg-primary/80 rounded-full"
+                  : "bg-primary/80  hover:bg-primary/80 rounded-full disabled:"
+              }`}
+            >
               {isLoading ? <Loader2 className="animate-spin w-4 h-4" /> : isChild ? "Reply" : "Comment"}
             </Button>
           </div>
