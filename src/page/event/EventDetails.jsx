@@ -61,7 +61,7 @@ const EventDetails = () => {
   const { data: event, isFetched: eventFetched } = useQuery(
     ["event"],
     async () => {
-      const res = await getAPI(`event/${eventId}`)
+      const res = await getAPI(`event/id/${eventId}`)
       return res.data
     },
     { refetchInterval: 2000 }
@@ -314,7 +314,7 @@ const EventDetails = () => {
                     <Share className="w-6 h-6 cursor-pointer" />
                   </DialogTrigger>
                   <DialogContent>
-                    <ShareEvent />
+                    <ShareEvent title={event.name} />
                   </DialogContent>
                 </Dialog>
               </span>

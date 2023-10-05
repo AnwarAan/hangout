@@ -1,17 +1,25 @@
 // import Navbar from "./components/navbar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useEffect } from "react"
+import { useQuery } from "@tanstack/react-query"
 import Overview from "./components/overview"
 import Events from "./components/events/page"
+import useToken from "@/hooks/useToken"
+import { getAPI } from "@/api/api"
 
 const Dashboard = () => {
+  const { userId } = useToken()
+  const { data: events, isFetched } = useQuery(["event-user"], async () => {
+    const res = await getAPI(`event/user/${userId}`)
+    return res.data
+  })
+
   useEffect(() => {
     document.documentElement.classList.add("light")
   }, [])
+
   return (
     <div>
-      {/* <Navbar /> */}
-
       <div className="xl:w-[1280px] mx-auto text-foreground">
         <div className="mt-4">
           <Tabs defaultValue="overview" className="w-full">
@@ -21,11 +29,11 @@ const Dashboard = () => {
             </TabsList>
             <TabsContent value="overview">
               <div className="w-full">
-                <Overview />
+                {isFetched && <Overview events={events} />}
               </div>
             </TabsContent>
             <TabsContent value="events">
-              <Events />
+              {isFetched && <Events events={events} />}
             </TabsContent>
           </Tabs>
         </div>

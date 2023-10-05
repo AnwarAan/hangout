@@ -44,7 +44,7 @@ const AppWrapper = () => {
             />
 
             <Route path="/event/:eventId" element={<EventDetails />} />
-            <Route path="/dashboard/:userId" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/send-email" element={<SendEmail />} />
             <Route path="/reset-password" element={<ResetPassword />} />

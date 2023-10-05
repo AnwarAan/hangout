@@ -1,11 +1,19 @@
-import { toggleSearch } from "@/features/slice/eventSlice";
-import { Switch } from "@/components/ui/switch";
-import { CalendarDays, LayoutDashboard, LogOut, Plus, Search, Ticket, Wallet } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { FormatToIDR } from "@/lib/utils";
+import { toggleSearch } from "@/features/slice/eventSlice"
+import { Switch } from "@/components/ui/switch"
+import {
+  CalendarDays,
+  LayoutDashboard,
+  LogOut,
+  Plus,
+  Search,
+  Ticket,
+  Wallet,
+} from "lucide-react"
+import { useDispatch } from "react-redux"
+import { Link } from "react-router-dom"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { FormatToIDR } from "@/lib/utils"
 
 import {
   DropdownMenu,
@@ -14,26 +22,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/dropdown-menu"
+import { Badge } from "@/components/ui/badge"
 
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import useToken from "@/hooks/useToken";
-import { getAPI } from "@/api/api";
+import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import useToken from "@/hooks/useToken"
+import { getAPI } from "@/api/api"
 
 const UserProfile = () => {
-  const { userId, logout } = useToken();
+  const { userId, logout } = useToken()
   const { data: user, isFetched } = useQuery(["user"], async () => {
-    const res = await getAPI(`user/${userId}`);
-    return res.data;
-  });
+    const res = await getAPI(`user/${userId}`)
+    return res.data
+  })
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar className="ring-2 ring-primary">
-          <AvatarImage className="object-cover" src={isFetched && user.image_url ? user.image_url : ""} />
+          <AvatarImage
+            className="object-cover"
+            src={isFetched && user.image_url ? user.image_url : ""}
+          />
           <AvatarFallback>PM</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -41,7 +52,9 @@ const UserProfile = () => {
         <DropdownMenuLabel className="">
           <div className="flex gap-2 items-center">
             <Avatar className="w-8 h-8">
-              <AvatarImage src={isFetched && user.imageUrl ? user.imageUrl : ""} />
+              <AvatarImage
+                src={isFetched && user.imageUrl ? user.imageUrl : ""}
+              />
               <AvatarFallback>PM</AvatarFallback>
             </Avatar>
             <div>
@@ -52,7 +65,9 @@ const UserProfile = () => {
           <DropdownMenuSeparator />
           <span className="flex gap-2 items-center">
             <p>My Points</p>
-            <Badge className="bg-primary hover:bg-primary/80 cursor-pointer">{isFetched && user.point}</Badge>
+            <Badge className="bg-primary hover:bg-primary/80 cursor-pointer">
+              {isFetched && user.point}
+            </Badge>
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -69,7 +84,7 @@ const UserProfile = () => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="flex gap-2 items-center">
-          <Link to={`/dashboard`} target="_blank" className="flex items-center gap-2">
+          <Link to={`/dashboard`} className="flex items-center gap-2">
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
           </Link>
@@ -86,40 +101,48 @@ const UserProfile = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}
 
 const Header = () => {
-  const dispatch = useDispatch();
-  const [darkMode, setDarkMode] = useState(false);
+  const dispatch = useDispatch()
+  const [darkMode, setDarkMode] = useState(false)
 
-  const { isLogin } = useToken();
+  const { isLogin } = useToken()
   useEffect(() => {
-    const mode = darkMode ? "dark" : "light";
-    localStorage.setItem("mode", mode);
-  }, [darkMode]);
+    const mode = darkMode ? "dark" : "light"
+    localStorage.setItem("mode", mode)
+  }, [darkMode])
 
   useEffect(() => {
-    const mode = localStorage.getItem("mode");
-    document.documentElement.classList.add(mode);
+    const mode = localStorage.getItem("mode")
+    document.documentElement.classList.add(mode)
 
     return () => {
-      document.documentElement.classList.remove(mode);
-    };
-  }, [darkMode]);
+      document.documentElement.classList.remove(mode)
+    }
+  }, [darkMode])
 
   return (
     <nav className="z-20 w-full flex items-center dark:bg-background dark:border-b dark:border-border justify-between  gap-4 px-6 sm:px-10 py-2 shadow-sm fixed top-0 left-0 bg-white">
       <div className="flex gap-8 items-center">
-        <Link className="text-xl font-bold leading-4 hidden md:block text-primary dark:text-foreground" to="/">
+        <Link
+          className="text-xl font-bold leading-4 hidden md:block text-primary dark:text-foreground"
+          to="/"
+        >
           Hangout.id
         </Link>
         <div
           onClick={() => dispatch(toggleSearch(true))}
           className="flex cursor-pointer bg-background border-primary dark:border-border backdrop-blur-sm w-[350px] gap-2 rounded-full items-center border p-1"
         >
-          <Search size={20} className="ml-2 text-primary dark:text-foreground" />
-          <button className="px-2 py-1 text-primary/50 dark:text-foreground">Search...</button>
+          <Search
+            size={20}
+            className="ml-2 text-primary dark:text-foreground"
+          />
+          <button className="px-2 py-1 text-primary/50 dark:text-foreground">
+            Search...
+          </button>
         </div>
       </div>
 
@@ -139,18 +162,25 @@ const Header = () => {
               <Link to="/login" className=" text-black p-2 px-4">
                 Login
               </Link>
-              <Link to="/register" className="rounded-full border hover:bg-gray-100 black text-black p-2 px-4">
+              <Link
+                to="/register"
+                className="rounded-full border hover:bg-gray-100 black text-black p-2 px-4"
+              >
                 Register
               </Link>
             </div>
           )}
         </div>
         <div className="flex items-center space-x-2">
-          <Switch id="theme-mode" checked={darkMode} onCheckedChange={() => setDarkMode(!darkMode)} />
+          <Switch
+            id="theme-mode"
+            checked={darkMode}
+            onCheckedChange={() => setDarkMode(!darkMode)}
+          />
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
