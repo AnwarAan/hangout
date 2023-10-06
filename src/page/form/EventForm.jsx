@@ -21,7 +21,9 @@ import LocationField from "@/page/form/components/LocationField";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { postAPIFormData } from "@/api/api.js";
+import * as Toast from "@radix-ui/react-toast";
 import useToken from "@/hooks/useToken.jsx";
+import "../../assets/css/toast.css";
 
 const emptyForm = {
   name: "",
@@ -49,6 +51,7 @@ const EventForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { userId } = useToken();
+  const [open, setOpen] = useState(false);
   // const [tag, setTag] = useState("");
   // const [tags, setTags] = useState([]);
   const [type, setType] = useState("free");
@@ -102,99 +105,157 @@ const EventForm = () => {
 
   const formSuccess = mutation.isSuccess ? { title: "Success", desc: "Event sucessfully created." } : {};
 
+  useEffect(() => {
+    if (mutation.isError || mutation.isSuccess) {
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 2000);
+    }
+  }, [mutation.isError, mutation.isSuccess]);
+
   return (
     <div className="w-full space-y-4 border rounded-md p-4">
-      <span className="flex items-center gap-2">
-        <ArrowLeft className="w-6 h-6" onClick={() => navigate(-1)} />
-        <h2 className="font-bold text-lg">Lets create your event</h2>
-      </span>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit, (err) => console.log(err))} encType="multipart/form-data">
-          <div className="flex gap-4 w-full">
-            <div className="w-full space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-3">
-                    <FormLabel htmlFor="name">Event Name</FormLabel>
-                    <FormControl>
-                      <Input id="name" placeholder="What is your event called" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <Toast.Provider>
+        {mutation.isError ? (
+          <Toast.Provider swipeDirection="right">
+            <Toast.Root className="ToastRootFailed" open={open} onOpenChange={setOpen}>
+              <Toast.Title className="ToastTitle">Failed</Toast.Title>
+            </Toast.Root>
+            <Toast.Viewport className="ToastViewport" />
+          </Toast.Provider>
+        ) : (
+          <Toast.Provider swipeDirection="right">
+            <Toast.Root className="ToastRoot" open={open} onOpenChange={setOpen}>
+              <Toast.Title className="ToastTitle">Success</Toast.Title>
+            </Toast.Root>
+            <Toast.Viewport className="ToastViewport" />
+          </Toast.Provider>
+        )}
+        <span className="flex items-center gap-2">
+          <ArrowLeft className="w-6 h-6" onClick={() => navigate(-1)} />
+          <h2 className="font-bold text-lg">Lets create your event</h2>
+        </span>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit, (err) => console.log(err))} encType="multipart/form-data">
+            <div className="flex gap-4 w-full">
+              <div className="w-full space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-3">
+                      <FormLabel htmlFor="name">Event Name</FormLabel>
+                      <FormControl>
+                        <Input id="name" placeholder="What is your event called" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <LocationField form={form} />
+                <LocationField form={form} />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Event Description</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Tell us about the event" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Event Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Tell us about the event" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-            <div className="w-full space-y-4">
-              <div className="flex gap-4">
-                {type === "paid" ? (
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem className="w-full flex flex-col gap-2">
-                        <span className="flex gap-2">
-                          <span onClick={() => setType("free")}>
-                            <ArrowLeft className="w-4 h-4 cursor-pointer" />
+              <div className="w-full space-y-4">
+                <div className="flex gap-4">
+                  {type === "paid" ? (
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem className="w-full flex flex-col gap-2">
+                          <span className="flex gap-2">
+                            <span onClick={() => setType("free")}>
+                              <ArrowLeft className="w-4 h-4 cursor-pointer" />
+                            </span>
+                            <FormLabel htmlFor="price">Event Price</FormLabel>
                           </span>
-                          <FormLabel htmlFor="price">Event Price</FormLabel>
-                        </span>
-                        <FormControl>
-                          <div className="flex border rounded-md">
-                            <span className="block p-2 bg-secondary rounded-l-md  text-muted-foreground">Rp.</span>
-                            <Input
-                              className="border-none"
-                              id="price"
-                              value={field.value === "paid" ? "" : field.value}
-                              onChange={field.onChange}
-                              placeholder="how much your event cost"
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : (
+                          <FormControl>
+                            <div className="flex border rounded-md">
+                              <span className="block p-2 bg-secondary rounded-l-md  text-muted-foreground">Rp.</span>
+                              <Input
+                                className="border-none"
+                                id="price"
+                                value={field.value === "paid" ? "" : field.value}
+                                onChange={field.onChange}
+                                placeholder="how much your event cost"
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <FormField
+                      control={form.control}
+                      name="type"
+                      render={() => (
+                        <FormItem className="w-full">
+                          <FormLabel>Event Type</FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={(value) => {
+                                setType(value);
+                                form.setValue("type", value);
+                              }}
+                              value={type}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select Event Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectItem value="free">Free</SelectItem>
+                                  <SelectItem value="paid">Paid</SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+
                   <FormField
                     control={form.control}
-                    name="type"
-                    render={() => (
+                    name="category"
+                    render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Event Type</FormLabel>
+                        <FormLabel>Event Category</FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={(value) => {
-                              setType(value);
-                              form.setValue("type", value);
+                            onValueChange={(e) => {
+                              field.onChange(e);
                             }}
-                            value={type}
+                            defaulValue={field.value}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select Event Type" />
+                              <SelectValue placeholder="Select Event Category" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                <SelectItem value="free">Free</SelectItem>
-                                <SelectItem value="paid">Paid</SelectItem>
+                                {categories.map((category) => (
+                                  <SelectItem key={category.value} value={category.value}>
+                                    {category.text}
+                                  </SelectItem>
+                                ))}
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -203,46 +264,13 @@ const EventForm = () => {
                       </FormItem>
                     )}
                   />
-                )}
+                </div>
+                <div className="flex gap-4 justify-between">
+                  <DateAndTime form={form} />
+                  <PickedTime form={form} />
+                </div>
 
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Event Category</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={(e) => {
-                            field.onChange(e);
-                          }}
-                          defaulValue={field.value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select Event Category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {categories.map((category) => (
-                                <SelectItem key={category.value} value={category.value}>
-                                  {category.text}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex gap-4 justify-between">
-                <DateAndTime form={form} />
-                <PickedTime form={form} />
-              </div>
-
-              {/* <div className="flex flex-col text-sm gap-3 h-max">
+                {/* <div className="flex flex-col text-sm gap-3 h-max">
                 <label htmlFor="tag">tag(s)</label>
                 <div className="flex gap-2">
                   <span className="border w-max rounded-md flex">
@@ -280,43 +308,44 @@ const EventForm = () => {
                 </div>
               </div> */}
 
-              <FormField
-                control={form.control}
-                name="file"
-                render={() => (
-                  <FormItem className="flex flex-col gap-3">
-                    <FormLabel htmlFor="name">Select File</FormLabel>
-                    <FormControl>
-                      <Input
-                        // name="file"
-                        type="file"
-                        id="file"
-                        placeholder=""
-                        form={form}
-                        onChange={(value) => handleChange("file", value.target.files[0])}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="file"
+                  render={() => (
+                    <FormItem className="flex flex-col gap-3">
+                      <FormLabel htmlFor="name">Select File</FormLabel>
+                      <FormControl>
+                        <Input
+                          // name="file"
+                          type="file"
+                          id="file"
+                          placeholder=""
+                          form={form}
+                          onChange={(value) => handleChange("file", value.target.files[0])}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
-          </div>
-          <Button
-            className="mt-4  bg-primary hover:bg-primary/80 dark:bg-primary dark:hover:bg-primary/80"
-            type="submit"
-            onClick={() =>
-              toast({
-                title: formSuccess && formSuccess.title,
-                description: formSuccess && formSuccess.desc,
-              })
-            }
-          >
-            {mutation.isLoading && <Loader2 className={`animate-spin w-4 h-4`} />}
-            {mutation.isLoading ? "creating..." : "Create Event"}
-          </Button>
-        </form>
-      </Form>
+            <Button
+              className="mt-4  bg-primary hover:bg-primary/80 dark:bg-primary dark:hover:bg-primary/80"
+              type="submit"
+              onClick={() =>
+                toast({
+                  title: formSuccess && formSuccess.title,
+                  description: formSuccess && formSuccess.desc,
+                })
+              }
+            >
+              {mutation.isLoading && <Loader2 className={`animate-spin w-4 h-4`} />}
+              {mutation.isLoading ? "creating..." : "Create Event"}
+            </Button>
+          </form>
+        </Form>
+      </Toast.Provider>
     </div>
   );
 };

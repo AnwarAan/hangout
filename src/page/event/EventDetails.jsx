@@ -22,6 +22,7 @@ import Comment from "./components/Comment";
 import useToken from "@/hooks/useToken";
 import { getAPI, putAPI } from "@/api/api";
 import ShareEvent from "./components/Share";
+import { Link } from "react-router-dom";
 import * as Toast from "@radix-ui/react-toast";
 import "../../assets/css/toast.css";
 
@@ -40,12 +41,11 @@ const EventDetails = () => {
   const { data: event, isFetched: eventFetched } = useQuery(
     ["event"],
     async () => {
-      const res = await getAPI(`event/${eventId}`);
+      const res = await getAPI(`event/detail/${eventId}`);
       return res.data;
     },
     { refetchInterval: 2000 }
   );
-
   const { data: reviews, isFetched: reviewFetched } = useQuery({
     queryKey: ["event", eventId],
     queryFn: async () => {
@@ -248,142 +248,97 @@ const EventDetails = () => {
                   </DialogContent>
                 </Dialog>
               </span>
-              {!isAlreadyAttend ? (
-                <div className="md:border md:border-border rounded-md w-full md:w-[250px] justify-between py-3 gap-2 md:px-6 md:py-4 flex flex-row md:flex-col items-center h-max">
-                  {discount > 0 ? (
-                    <span>
-                      <p className="font-bold">{FormatToIDR(discount)}</p>
-                      <span className="flex gap-2">
-                        <Badge className="text-xs">{`${event.promo.percentage}%`}</Badge>
-                        <p className="line-through text-muted-foreground text-sm">{FormatToIDR(price)}</p>
+              {userId !== (eventFetched && event.userId) ? (
+                !isAlreadyAttend ? (
+                  <div className="md:border md:border-border rounded-md w-full md:w-[250px] justify-between py-3 gap-2 md:px-6 md:py-4 flex flex-row md:flex-col items-center h-max">
+                    {discount > 0 ? (
+                      <span>
+                        <p className="font-bold">{FormatToIDR(discount)}</p>
+                        <span className="flex gap-2">
+                          <Badge className="text-xs">{`${event.promo.percentage}%`}</Badge>
+                          <p className="line-through text-muted-foreground text-sm">{FormatToIDR(price)}</p>
+                        </span>
                       </span>
-                    </span>
-                  ) : (
-                    <p className=" font-bold text-lg">{event.type === "paid" ? FormatToIDR(price) : event.type}</p>
-                  )}
+                    ) : (
+                      <p className=" font-bold text-lg">{event.type === "paid" ? FormatToIDR(price) : event.type}</p>
+                    )}
 
-                  <Dialog>
-                    <DialogTrigger>
-                      <span className="flex items-center gap-2 hover:bg-secondary w-full order-2 md:order-1 border p-2 rounded-md">
-                        <Ticket className="text-primary" />
-                        <p>Get Ticket</p>
-                      </span>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{currentPage === 1 ? "Contact Information" : "Checkout"}</DialogTitle>
-                      </DialogHeader>
-                      <div>
-                        {currentPage === 1 &&
-                          (isLogin ? (
-                            <p>
-                              logged in as{" "}
-                              <span className="text-muted-foreground">{eventFetched && event.user.email}</span>
-                            </p>
-                          ) : (
-                            <p>register for the event</p>
-                          ))}
-                        <Form {...form}>
-                          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-                            {currentPage === 1 && (
-                              <>
-                                <div className="flex gap-4 items-center mt-4">
+                    <Dialog>
+                      <DialogTrigger>
+                        {!isLogin ? (
+                          <Link to="/login">
+                            <span className="flex items-center gap-2 hover:bg-secondary w-full order-2 md:order-1 border p-2 rounded-md">
+                              <Ticket className="text-primary" />
+                              <p>Get Ticket</p>
+                            </span>
+                          </Link>
+                        ) : (
+                          <span className="flex items-center gap-2 hover:bg-secondary w-full order-2 md:order-1 border p-2 rounded-md">
+                            <Ticket className="text-primary" />
+                            <p>Get Ticket</p>
+                          </span>
+                        )}
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>{currentPage === 1 ? "Contact Information" : "Checkout"}</DialogTitle>
+                        </DialogHeader>
+                        <div>
+                          {currentPage === 1 &&
+                            (isLogin ? (
+                              <p>
+                                logged in as{" "}
+                                <span className="text-muted-foreground">{eventFetched && event.user.email}</span>
+                              </p>
+                            ) : (
+                              <p>register for the event</p>
+                            ))}
+                          <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+                              {currentPage === 1 && (
+                                <>
+                                  <div className="flex gap-4 items-center mt-4">
+                                    <FormField
+                                      control={form.control}
+                                      name="firstName"
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel>First Name</FormLabel>
+                                          <FormControl>
+                                            <Input id="firstName" {...field} />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    <FormField
+                                      control={form.control}
+                                      name="lastName"
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel>Last Name</FormLabel>
+                                          <FormControl>
+                                            <Input id="lastName" {...field} />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div>
                                   <FormField
                                     control={form.control}
-                                    name="firstName"
+                                    name="email"
                                     render={({ field }) => (
                                       <FormItem>
-                                        <FormLabel>First Name</FormLabel>
+                                        <FormLabel>Email</FormLabel>
                                         <FormControl>
-                                          <Input id="firstName" {...field} />
+                                          <Input id="email" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                       </FormItem>
                                     )}
                                   />
-
-                                  <FormField
-                                    control={form.control}
-                                    name="lastName"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>Last Name</FormLabel>
-                                        <FormControl>
-                                          <Input id="lastName" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                </div>
-                                <FormField
-                                  control={form.control}
-                                  name="email"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Email</FormLabel>
-                                      <FormControl>
-                                        <Input id="email" {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-
-                                <span
-                                  onClick={async () => {
-                                    const inputErr = await form.trigger(["email", "firstName", "lastName"], {
-                                      shouldFocus: true,
-                                    });
-                                    if (inputErr) setCurrentPage(currentPage + 1);
-                                  }}
-                                  className="bg-primary p-2 px-4 rounded-md hover:bg-primary/80 block w-max text-primary-foreground cursor-pointer"
-                                >
-                                  Register
-                                </span>
-                              </>
-                            )}
-                            {
-                              currentPage === 2 && (
-                                <div className="p-2">
-                                  <span
-                                    onClick={() => setCurrentPage(currentPage - 1)}
-                                    className="flex gap-2 items-center mb-4  hover:text-muted-foreground cursor-pointer"
-                                  >
-                                    <ArrowLeft className="w-4 h-4 cursor-pointer" />
-                                    <p>back</p>
-                                  </span>
-                                  <span className="grid grid-cols-3">
-                                    <p>Name</p>
-                                    <p className="span-2 text-muted-foreground">{`${form.getValues(
-                                      "firstName"
-                                    )} ${form.getValues("lastName")}`}</p>
-                                  </span>
-                                  <span className="grid grid-cols-3">
-                                    <p>Email</p>
-                                    <p className="span-2 text-muted-foreground">{form.getValues("email")}</p>
-                                  </span>
-                                  <span className="grid grid-cols-3">
-                                    <p>Items</p>
-                                    <p className="span-2 text-muted-foreground">{`1 x ${event.name} Ticket`}</p>
-                                  </span>
-                                  <span className="grid grid-cols-3">
-                                    <p>Price</p>
-                                    <p className="span-2 text-muted-foreground">{FormatToIDR(price)}</p>
-                                  </span>
-                                  {discount > 0 && (
-                                    <span className="grid grid-cols-3">
-                                      <p>Discount</p>
-                                      <p className="span-2 text-muted-foreground">{FormatToIDR(price - discount)}</p>
-                                    </span>
-                                  )}
-                                  <Separator className="my-3" />
-                                  <span className="grid grid-cols-3">
-                                    <p className="font-bold">Total</p>
-                                    <p className="span-2 text-foreground">
-                                      {discount ? FormatToIDR(price - (price - discount)) : FormatToIDR(price)}
-                                    </p>
-                                  </span>
 
                                   <span
                                     onClick={async () => {
@@ -392,101 +347,161 @@ const EventDetails = () => {
                                       });
                                       if (inputErr) setCurrentPage(currentPage + 1);
                                     }}
-                                    className="bg-yellow-500 p-2 px-4 rounded-md hover:bg-yellow-400/80 block text-primary-foreground cursor-pointer w-full mt-4 text-center"
+                                    className="bg-primary p-2 px-4 rounded-md hover:bg-primary/80 block w-max text-primary-foreground cursor-pointer"
                                   >
-                                    Redeem Referral
+                                    Register
                                   </span>
-
-                                  <Button className="mt-6 bg-primary hover:bg-primary/80 w-full" type="submit">
-                                    {transactions.isLoading && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
-                                    {transactions.isLoading ? "Processing..." : "Checkout"}
-                                  </Button>
-                                </div>
-                              )
-                              // : (
-                              //   (transactions.isSuccess && (
-                              //     <div>
-                              //       <div className="flex items-center gap-2 p-2 bg-green-100 rounded-full text-green-600 justify-center">
-                              //         <p>Checkout Success</p>
-                              //         <Check className="h-4 w-4" />
-                              //       </div>
-                              //       <p className="text-muted-foreground text-center my-4">you can close(x) the modal</p>
-                              //     </div>
-                              //   )) ||
-                              //   (transactions.isError && (
-                              //     <div>
-                              //       <div className="flex items-center gap-2 p-2 bg-red-100 rounded-full text-red-600 justify-center">
-                              //         <p>Checkout Failed</p>
-                              //         <Check className="h-4 w-4" />
-                              //       </div>
-                              //       <p className="text-muted-foreground text-center my-4">you can close(x) the modal</p>
-                              //     </div>
-                              //   ))
-                              // )
-                            }
-                            {
-                              currentPage === 3 && (
-                                <div className="p-2">
-                                  <span
-                                    onClick={() => setCurrentPage(currentPage - 1)}
-                                    className="flex gap-2 items-center mb-4  hover:text-muted-foreground cursor-pointer"
-                                  >
-                                    <ArrowLeft className="w-4 h-4 cursor-pointer" />
-                                    <p>back</p>
-                                  </span>
-
-                                  <FormField
-                                    control={form.control}
-                                    name="referral"
-                                    render={({ field }) => (
-                                      <FormItem className="mt-6">
-                                        <FormLabel>Referral Code</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            id="referral"
-                                            {...field}
-                                            placeholder="ex. 30eb68f-e0fa-5ecc-887a-7c7a62614681"
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
+                                </>
+                              )}
+                              {
+                                currentPage === 2 && (
+                                  <div className="p-2">
+                                    <span
+                                      onClick={() => setCurrentPage(currentPage - 1)}
+                                      className="flex gap-2 items-center mb-4  hover:text-muted-foreground cursor-pointer"
+                                    >
+                                      <ArrowLeft className="w-4 h-4 cursor-pointer" />
+                                      <p>back</p>
+                                    </span>
+                                    <span className="grid grid-cols-3">
+                                      <p>Name</p>
+                                      <p className="span-2 text-muted-foreground">{`${form.getValues(
+                                        "firstName"
+                                      )} ${form.getValues("lastName")}`}</p>
+                                    </span>
+                                    <span className="grid grid-cols-3">
+                                      <p>Email</p>
+                                      <p className="span-2 text-muted-foreground">{form.getValues("email")}</p>
+                                    </span>
+                                    <span className="grid grid-cols-3">
+                                      <p>Items</p>
+                                      <p className="span-2 text-muted-foreground">{`1 x ${event.name} Ticket`}</p>
+                                    </span>
+                                    <span className="grid grid-cols-3">
+                                      <p>Price</p>
+                                      <p className="span-2 text-muted-foreground">{FormatToIDR(price)}</p>
+                                    </span>
+                                    {discount > 0 && (
+                                      <span className="grid grid-cols-3">
+                                        <p>Discount</p>
+                                        <p className="span-2 text-muted-foreground">{FormatToIDR(price - discount)}</p>
+                                      </span>
                                     )}
-                                  />
+                                    <Separator className="my-3" />
+                                    <span className="grid grid-cols-3">
+                                      <p className="font-bold">Total</p>
+                                      <p className="span-2 text-foreground">
+                                        {discount ? FormatToIDR(price - (price - discount)) : FormatToIDR(price)}
+                                      </p>
+                                    </span>
 
-                                  <Button className="mt-6 bg-primary hover:bg-primary/80 w-full" type="submit">
-                                    {transactions.isLoading && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
-                                    {transactions.isLoading ? "Processing..." : "Checkout"}
-                                  </Button>
-                                </div>
-                              )
-                              // (
-                              //   (transactions.isSuccess && (
-                              //     <div>
-                              //       <div className="flex items-center gap-2 p-2 bg-green-100 rounded-full text-green-600 justify-center">
-                              //         <p>Checkout Success</p>
-                              //         <Check className="h-4 w-4" />
-                              //       </div>
-                              //     </div>
-                              //   )) ||
-                              //   (transactions.isError && (
-                              //     <div>
-                              //       <div className="flex items-center gap-2 p-2 bg-red-100 rounded-full text-red-600 justify-center">
-                              //         <p>Checkout Failed</p>
-                              //         <Check className="h-4 w-4" />
-                              //       </div>
-                              //     </div>
-                              //   ))
-                              // )
-                            }
-                          </form>
-                        </Form>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
+                                    <span
+                                      onClick={async () => {
+                                        const inputErr = await form.trigger(["email", "firstName", "lastName"], {
+                                          shouldFocus: true,
+                                        });
+                                        if (inputErr) setCurrentPage(currentPage + 1);
+                                      }}
+                                      className="bg-yellow-500 p-2 px-4 rounded-md hover:bg-yellow-400/80 block text-primary-foreground cursor-pointer w-full mt-4 text-center"
+                                    >
+                                      Redeem Referral
+                                    </span>
+
+                                    <Button className="mt-6 bg-primary hover:bg-primary/80 w-full" type="submit">
+                                      {transactions.isLoading && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+                                      {transactions.isLoading ? "Processing..." : "Checkout"}
+                                    </Button>
+                                  </div>
+                                )
+                                // : (
+                                //   (transactions.isSuccess && (
+                                //     <div>
+                                //       <div className="flex items-center gap-2 p-2 bg-green-100 rounded-full text-green-600 justify-center">
+                                //         <p>Checkout Success</p>
+                                //         <Check className="h-4 w-4" />
+                                //       </div>
+                                //       <p className="text-muted-foreground text-center my-4">you can close(x) the modal</p>
+                                //     </div>
+                                //   )) ||
+                                //   (transactions.isError && (
+                                //     <div>
+                                //       <div className="flex items-center gap-2 p-2 bg-red-100 rounded-full text-red-600 justify-center">
+                                //         <p>Checkout Failed</p>
+                                //         <Check className="h-4 w-4" />
+                                //       </div>
+                                //       <p className="text-muted-foreground text-center my-4">you can close(x) the modal</p>
+                                //     </div>
+                                //   ))
+                                // )
+                              }
+                              {
+                                currentPage === 3 && (
+                                  <div className="p-2">
+                                    <span
+                                      onClick={() => setCurrentPage(currentPage - 1)}
+                                      className="flex gap-2 items-center mb-4  hover:text-muted-foreground cursor-pointer"
+                                    >
+                                      <ArrowLeft className="w-4 h-4 cursor-pointer" />
+                                      <p>back</p>
+                                    </span>
+
+                                    <FormField
+                                      control={form.control}
+                                      name="referral"
+                                      render={({ field }) => (
+                                        <FormItem className="mt-6">
+                                          <FormLabel>Referral Code</FormLabel>
+                                          <FormControl>
+                                            <Input
+                                              id="referral"
+                                              {...field}
+                                              placeholder="ex. 30eb68f-e0fa-5ecc-887a-7c7a62614681"
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    <Button className="mt-6 bg-primary hover:bg-primary/80 w-full" type="submit">
+                                      {transactions.isLoading && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+                                      {transactions.isLoading ? "Processing..." : "Checkout"}
+                                    </Button>
+                                  </div>
+                                )
+                                // (
+                                //   (transactions.isSuccess && (
+                                //     <div>
+                                //       <div className="flex items-center gap-2 p-2 bg-green-100 rounded-full text-green-600 justify-center">
+                                //         <p>Checkout Success</p>
+                                //         <Check className="h-4 w-4" />
+                                //       </div>
+                                //     </div>
+                                //   )) ||
+                                //   (transactions.isError && (
+                                //     <div>
+                                //       <div className="flex items-center gap-2 p-2 bg-red-100 rounded-full text-red-600 justify-center">
+                                //         <p>Checkout Failed</p>
+                                //         <Check className="h-4 w-4" />
+                                //       </div>
+                                //     </div>
+                                //   ))
+                                // )
+                              }
+                            </form>
+                          </Form>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                ) : (
+                  <div className="md:border md:border-border rounded-md w-full md:w-[250px] justify-between py-3 gap-2 md:px-6 md:py-4 flex flex-row md:flex-col items-center h-max">
+                    <p className="font-bold">Registered</p>
+                  </div>
+                )
               ) : (
                 <div className="md:border md:border-border rounded-md w-full md:w-[250px] justify-between py-3 gap-2 md:px-6 md:py-4 flex flex-row md:flex-col items-center h-max">
-                  <p className="font-bold">Registered</p>
+                  <p className="font-bold">Owned</p>
                 </div>
               )}
             </div>

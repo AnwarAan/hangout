@@ -24,10 +24,14 @@ import { getAPI } from "@/api/api";
 
 const UserProfile = () => {
   const { userId, logout } = useToken();
-  const { data: user, isFetched } = useQuery(["user"], async () => {
-    const res = await getAPI(`user/${userId}`);
-    return res.data;
-  });
+  const { data: user, isFetched } = useQuery(
+    ["user"],
+    async () => {
+      const res = await getAPI(`user/${userId}`);
+      return res.data;
+    },
+    { refetchInterval: 5000 }
+  );
 
   return (
     <DropdownMenu>
