@@ -1,26 +1,26 @@
-import { Fragment, Suspense, lazy } from "react";
-import { Routes, Route } from "react-router-dom";
-import useToken from "../hooks/useToken";
+import { Fragment, Suspense, lazy } from "react"
+import { Routes, Route } from "react-router-dom"
+import useToken from "../hooks/useToken"
 
-const App = lazy(() => import("./App"));
-const Home = lazy(() => import("../page/Home"));
-const EventForm = lazy(() => import("../page/form/EventForm"));
-const Login = lazy(() => import("../components/auth/Login"));
-const Register = lazy(() => import("../components/auth/Register"));
-const AuthPage = lazy(() => import("../components/auth/AuthPage"));
-const Profile = lazy(() => import("../page/profile"));
-const MyEvent = lazy(() => import("../page/profile/page/myEvent"));
-const MyReferals = lazy(() => import("../page/profile/page/myReferals"));
-const MyFavorites = lazy(() => import("../page/profile/page/myFavorites"));
-const EventDetails = lazy(() => import("../page/event/EventDetails"));
-const Dashboard = lazy(() => import("../page/dashboard/page"));
-const VerifyEmail = lazy(() => import("../components/auth/VerifyEmail"));
-const SendEmail = lazy(() => import("../components/auth/SendEmail"));
-const ResetPassword = lazy(() => import("../components/auth/ResetPassword"));
-const ErrorPage = lazy(() => import("../page/ErrorPage"));
+const App = lazy(() => import("./App"))
+const Home = lazy(() => import("../page/Home"))
+const EventForm = lazy(() => import("../page/form/EventForm"))
+const Login = lazy(() => import("../components/auth/Login"))
+const Register = lazy(() => import("../components/auth/Register"))
+const AuthPage = lazy(() => import("../components/auth/AuthPage"))
+const Profile = lazy(() => import("../page/profile"))
+const MyEvent = lazy(() => import("../page/profile/page/myEvent"))
+const MyReferals = lazy(() => import("../page/profile/page/myReferals"))
+const MyFavorites = lazy(() => import("../page/profile/page/myFavorites"))
+const EventDetails = lazy(() => import("../page/event/EventDetails"))
+const Dashboard = lazy(() => import("../page/dashboard/page"))
+const VerifyEmail = lazy(() => import("../components/auth/VerifyEmail"))
+const SendEmail = lazy(() => import("../components/auth/SendEmail"))
+const ResetPassword = lazy(() => import("../components/auth/ResetPassword"))
+const ErrorPage = lazy(() => import("../page/ErrorPage"))
 
 const AppWrapper = () => {
-  const { setToken } = useToken();
+  const { setToken } = useToken()
 
   return (
     <Fragment>
@@ -29,7 +29,10 @@ const AppWrapper = () => {
           <Route path="/" element={<App />}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login setToken={setToken} />} />
-            <Route path="/register" element={<Register routing="path" path="/sign-up" />} />
+            <Route
+              path="/register"
+              element={<Register routing="path" path="/sign-up" />}
+            />
 
             <Route
               path="/event-form"
@@ -56,7 +59,7 @@ const AppWrapper = () => {
         </Routes>
       </Suspense>
     </Fragment>
-  );
-};
+  )
+}
 
-export default AppWrapper;
+export default AppWrapper

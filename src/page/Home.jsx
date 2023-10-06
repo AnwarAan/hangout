@@ -7,7 +7,7 @@ import UserCard from "@/components/event/UserCard";
 
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { useQueryCache } from "@/hooks/useQueryCache";
 import { categories } from "../../constant/index.jsx";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,7 +25,7 @@ const MyEvent = () => {
     data: user,
     isLoading,
     isFetched: userFetched,
-  } = useQuery(["event-user"], async () => {
+  } = useQuery(["event-list"], async () => {
     const res = await getAPI(`user/${userId}`);
     return res.data;
   });
@@ -47,10 +47,14 @@ const Home = () => {
   const { isLogin } = useToken();
   const [tab, setTab] = useState("All");
 
-  const { data, isLoading } = useQuery(["events"], async () => {
-    const res = await getAPI("event");
-    return res.data;
-  });
+  const { data, isLoading } = useQuery(
+    ["events"],
+    async () => {
+      const res = await getAPI("event");
+      return res.data;
+    },
+    { refetchInterval: 1500 }
+  );
 
   // const { data: today, isLoading: todayLoading } = useQuery(["events"], async () => {
   //   const res = await getAPI("event");
@@ -73,8 +77,6 @@ const Home = () => {
   // const { data: free, isLoading: freeLoading } = useQueryCache("filter/free", "/f", { price: "free" }, tab === "Free");
 
   // const { data: userEvent } = useQueryCache(`event/${userId}`, "/user", { id: userId }, true);
-
-  useEffect(() => {}, []);
 
   return (
     // <Container>

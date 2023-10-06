@@ -73,7 +73,7 @@ const UserProfile = () => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="flex gap-2 items-center">
-          <Link to={`/dashboard`} target="_blank" className="flex items-center gap-2">
+          <Link to={`/dashboard`} className="flex items-center gap-2">
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
           </Link>

@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import CommentSection from "./components/CommentSection";
 import Comment from "./components/Comment";
 import useToken from "@/hooks/useToken";
-import { getAPI, putAPI } from "@/api/api";
+import { getAPI, postAPI, putAPI } from "@/api/api";
 import ShareEvent from "./components/Share";
 import { Link } from "react-router-dom";
 import * as Toast from "@radix-ui/react-toast";
@@ -44,7 +44,7 @@ const EventDetails = () => {
       const res = await getAPI(`event/detail/${eventId}`);
       return res.data;
     },
-    { refetchInterval: 2000 }
+    { refetchInterval: 1500 }
   );
   const { data: reviews, isFetched: reviewFetched } = useQuery({
     queryKey: ["event", eventId],
@@ -104,6 +104,13 @@ const EventDetails = () => {
     },
   });
 
+  const clickWish = useMutation({
+    mutationFn: async (data) => {
+      console.log(data);
+      return postAPI(`wishlist`, data);
+    },
+  });
+
   const price = eventFetched && event.type === "paid" ? Number(event.price) : 0;
   const discount =
     eventFetched && event.promo !== null ? price - price * (Number(eventFetched && event.promo.percentage) / 100) : 0;
@@ -124,6 +131,16 @@ const EventDetails = () => {
     }
   };
 
+  const onClickWish = () => {
+    clickWish.mutate({
+      userId: userId,
+      eventId: eventId,
+    });
+  };
+
+  const find = eventFetched && event.wishlists.find((e) => e.userId === userId) ? true : false;
+  const wish = find ? eventFetched && event.wishlists.find((e) => e.userId === userId).status : false;
+
   useEffect(() => {
     if (form.formState.isSubmitSuccessful) {
       form.reset({
@@ -137,7 +154,6 @@ const EventDetails = () => {
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
-        // window.location.reload();
       }, 2000);
     }
   }, [form.formState, form, transactions.isError, transactions.isSuccess, isAlreadyAttend]);
@@ -238,13 +254,17 @@ const EventDetails = () => {
             </div>
             <div className="order-1 md:order-2 flex flex-col self-start gap-4 w-full md:w-max">
               <span className="flex items-center gap-4 self-end">
-                <Heart className="w-6 h-6 cursor-pointer" />
+                <Heart
+                  fill={wish ? "#2563EB" : "none"}
+                  className="w-6 h-6 cursor-pointer text-primary"
+                  onClick={onClickWish}
+                />
                 <Dialog>
                   <DialogTrigger>
                     <Share className="w-6 h-6 cursor-pointer" />
                   </DialogTrigger>
                   <DialogContent>
-                    <ShareEvent />
+                    <ShareEvent title={event.name} />
                   </DialogContent>
                 </Dialog>
               </span>
