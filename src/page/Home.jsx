@@ -7,7 +7,7 @@ import UserCard from "@/components/event/UserCard";
 
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { useQueryCache } from "@/hooks/useQueryCache";
 import { categories } from "../../constant/index.jsx";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,11 +16,13 @@ import NoResources from "@/components/shared/NoResources";
 import { getAPI } from "@/api/api";
 import useToken from "@/hooks/useToken";
 
-const tabs = ["All", "Online", "Today", "This Week", "Free"];
+const tabs = ["All", "Online", "Free"];
+// const tabs = ["All", "Online", "Today", "This Week", "Free"];
+
 
 const MyEvent = () => {
   const { userId } = useToken();
-
+  
   const {
     data: user,
     isLoading,
@@ -29,7 +31,9 @@ const MyEvent = () => {
     const res = await getAPI(`user/${userId}`);
     return res.data;
   });
-
+  {/* <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
+              {userEvent && userEvent.slice(0, 3).map((event) => <UserCard key={event.id} event={event} />)}
+  </div> */}
   return (
     <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
       {isLoading ? (
@@ -55,31 +59,62 @@ const Home = () => {
     },
     { refetchInterval: 1500 }
   );
+  
+  // const EventOnline = () => {
+  //   const { data: online, isLoading: onlineLoading } = useQuery(["/events/location"], async () => {
+  //     try {
+  //       const res = await getAPI("event?is_online=online")
+  //       console.log(data)
+  //       return res.data
+  //     } catch (error) {
+  //       throw new Error(error.response.data.message)
+  //     }
+  //   });
 
-  // const { data: today, isLoading: todayLoading } = useQuery(["events"], async () => {
-  //   const res = await getAPI("event");
-  //   return res.data;
-  // });
+  //   return (online, onlineLoading)
+  // }
+  // useEffect(() => {
+  //   if(tabs === "Online") {
+  //     setTab("Onlline")
+  //   }
+  // })
 
-  // const { data: today, isLoading: todayLoading } = useQueryCache("filter/today", "/f", { date: 0 }, tab === "Today");
-  // const { data: thisWeek, isLoading: thisWeekLoading } = useQueryCache(
-  //   "filter/thisWeek",
-  //   "/f",
-  //   { date: 7 },
-  //   tab === "This Week"
-  // );
-  // const { data: online, isLoading: onlineLoading } = useQueryCache(
-  //   "filter/online",
-  //   "/location",
-  //   { loc: "isOnline", value: "online" },
-  //   tab === "Online"
-  // );
+  // const getOnline = EventOnline();
+
+  // console.log(getOnline);
+
+  const { data: online, isLoading: onlineLoading } = useQuery(["/events/location"], async () => {
+    try {
+      const res = await getAPI("event?is_online=online")
+      console.log(data)
+      return res.data
+    } catch (error) {
+      throw new Error(error.response.data.message)
+    }
+  });
+
+
+   //   const { data: today, isLoading: todayLoading } = useQuery(["/filter/today"], async () => {
+  //     try {
+  //       const res = await getAPI(`event?thisWeek=1695986563468&endDate=1696168108871`)
+  //       return res.data
+  //     } catch (error) {
+  //       throw new Error(error.response.data.message)
+  //     }
+  //   });
+  
   // const { data: free, isLoading: freeLoading } = useQueryCache("filter/free", "/f", { price: "free" }, tab === "Free");
 
-  // const { data: userEvent } = useQueryCache(`event/${userId}`, "/user", { id: userId }, true);
+  const { data: free, isLoading: freeLoading } = useQuery(["/filter/free"], async () => {
+    try {
+      const res = await getAPI("event?type=free")
+      return res.data
+    } catch (error) {
+      throw new Error(error.response.data.message)
+    }
+  });
 
   return (
-    // <Container>
     <div className={`flex flex-col w-full items-center ${isLogin && "lg:flex-row"}`}>
       <div
         className={`${
@@ -121,8 +156,9 @@ const Home = () => {
                 )}
               </div>
             </TabsContent>
-            <TabsContent value="Online">
-              {/* <div className="p-2 grid grid-cols-4 gap-4">
+            { 
+              <TabsContent value="Online">
+              <div className="p-2 grid grid-cols-4 gap-4">
                 {onlineLoading ? (
                   <Skeleton className="bg-secondary w-[260px] h-[100px]" />
                 ) : online.length > 0 ? (
@@ -134,10 +170,11 @@ const Home = () => {
                 ) : (
                   <NoResources text="no online events" />
                 )}
-              </div> */}
+              </div>
             </TabsContent>
-            <TabsContent value="Today">
-              {/* <div className="p-2 grid grid-cols-4 gap-4">
+            }
+            {/* <TabsContent value="Today">
+              <div className="p-2 grid grid-cols-4 gap-4">
                 {todayLoading ? (
                   <Skeleton className="bg-secondary w-[260px] h-[100px]" />
                 ) : today.length > 0 ? (
@@ -149,10 +186,10 @@ const Home = () => {
                 ) : (
                   <NoResources text="no today's events" />
                 )}
-              </div> */}
-            </TabsContent>
-            <TabsContent value="This Week">
-              {/* <div className="p-2 grid grid-cols-4 gap-4">
+              </div>
+            </TabsContent> */}
+            {/* <TabsContent value="This Week">
+              <div className="p-2 grid grid-cols-4 gap-4">
                 {thisWeekLoading ? (
                   <Skeleton className="bg-secondary w-[100px] h-[100px]" />
                 ) : thisWeek.length > 0 ? (
@@ -164,10 +201,10 @@ const Home = () => {
                 ) : (
                   <NoResources text="no events this week" />
                 )}
-              </div> */}
-            </TabsContent>
+              </div>
+            </TabsContent> */}
             <TabsContent value="Free">
-              {/* <div className="p-2 grid grid-cols-4 gap-4">
+              <div className="p-2 grid grid-cols-4 gap-4">
                 {freeLoading ? (
                   <Skeleton className="bg-secondary w-[100px] h-[100px]" />
                 ) : free.length > 0 ? (
@@ -179,7 +216,7 @@ const Home = () => {
                 ) : (
                   <NoResources text="sowy no free events" />
                 )}
-              </div> */}
+              </div>
             </TabsContent>
           </Tabs>
         </div>
@@ -197,14 +234,11 @@ const Home = () => {
             </div>
 
             {isLogin ? <MyEvent /> : ""}
-            {/* <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
-              {userEvent && userEvent.slice(0, 3).map((event) => <UserCard key={event.id} event={event} />)}
-            </div> */}
+            
           </div>
         </div>
       )}
     </div>
-    // </Container>
   );
 };
 

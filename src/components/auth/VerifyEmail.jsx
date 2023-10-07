@@ -23,11 +23,13 @@ const VerifyEmail = () => {
       return navigate("/");
     }
   }, [token, userId, navigate, user, isFetched]);
+  console.log(isFetched && user.isActive === true);
   return (
     <div>
       <h1>Verify Email</h1>
     </div>
   );
 };
+
 
 export default VerifyEmail;

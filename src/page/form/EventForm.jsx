@@ -58,10 +58,11 @@ const EventForm = () => {
 
   const mutation = useMutation({
     mutationFn: async (newEvents) => {
+      console.log(newEvents);
       return postAPIFormData("event", newEvents);
     },
   });
-
+  
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: emptyForm,

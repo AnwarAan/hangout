@@ -18,6 +18,15 @@ const VerifyEmail = lazy(() => import("../components/auth/VerifyEmail"))
 const SendEmail = lazy(() => import("../components/auth/SendEmail"))
 const ResetPassword = lazy(() => import("../components/auth/ResetPassword"))
 const ErrorPage = lazy(() => import("../page/ErrorPage"))
+const CategoryMusic = lazy(() => import("../page/event/CategoryMusic")) 
+const CategoryHealth = lazy(() => import("../page/event/CategoryHealth")) 
+const CategoryVisual = lazy(() => import("../page/event/CategoryVisual")) 
+const CategoryHoliday = lazy(() => import("../page/event/CategoryHoliday")) 
+const CategoryFoodDrink = lazy(() => import("../page/event/CategoryFoodDrink")) 
+const CategorySportFit = lazy(() => import("../page/event/CategorySportFit")) 
+const CategoryHobbies = lazy(() => import("../page/event/CategoryHobbies")) 
+const CategoryBusiness = lazy(() => import("../page/event/CategoryBusiness")) 
+
 
 const AppWrapper = () => {
   const { setToken } = useToken()
@@ -42,7 +51,6 @@ const AppWrapper = () => {
                 </AuthPage>
               }
             />
-
             <Route path="/event/:eventId" element={<EventDetails />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
@@ -55,6 +63,60 @@ const AppWrapper = () => {
               <Route path="my-referals" element={<MyReferals />} />
               <Route path="my-favorites" element={<MyFavorites />} />
             </Route>
+            <Route
+              path="/event/category/music"
+              element={
+                  <CategoryMusic/>
+              }
+            />
+            <Route
+              path="/event/category/business"
+              element={
+                  <CategoryBusiness/>
+              }
+            />
+            <Route
+              path="/event/category/health"
+              element={
+                  <CategoryHealth/>
+              }
+            />
+            <Route
+              path="/event/category/visual"
+              element={
+                  <CategoryVisual/>
+              }
+            />
+            <Route
+              path="/event/category/holiday"
+              element={
+                  <CategoryHoliday/>
+              }
+            />
+            <Route
+              path="/event/category/health"
+              element={
+                  <CategoryHealth/>
+              }
+            />
+            <Route
+              path="/event/category/sportFitness"
+              element={
+                  <CategorySportFit/>
+              }
+            />
+            <Route
+              path="/event/category/foodDrink"
+              element={
+                  <CategoryFoodDrink/>
+              }
+            />
+            <Route
+              path="/event/category/hobbies"
+              element={
+                  <CategoryHobbies/>
+              }
+            />
           </Route>
         </Routes>
       </Suspense>
