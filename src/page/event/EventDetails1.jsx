@@ -32,27 +32,17 @@ const EventDetails = () => {
     const [currentPage, setCurrentPage] = useState(1)
 
 
-    // const { data: event, isFetched } = useQuery(
-    //     {
+    const { data: event, isFetched } = useQuery(
+        {
 
-    //         queryKey: ["event", eventId],
-    //         queryFn: async () => {
-    //             const res = await services.get(`/events/${eventId}`)
-    //             return res.data
-    //         },
-    //         refetchInterval: 1000
-    //     }
-    // )
-
-    const { data, isLoading } = useQuery([`/category/${categoryBusiness}`], async () => {
-        try {
-          const res = await getAPI(`event?category=business`)
-          return res.data; 
-        } catch (error) {
-          throw new Error(error.response.data.message)
+            queryKey: ["event", eventId],
+            queryFn: async () => {
+                const res = await services.get(`/events/${eventId}`)
+                return res.data
+            },
+            refetchInterval: 1000
         }
-      });      
-      
+    )
     const eventRating = isFetched && event.reviews.length > 0 ? event.reviews.reduce((acc, curr) => acc + (curr.rating ? curr.rating : 0), 0) / event.reviews.filter(review => review.rating !== null).length : -1
 
     let ratingEvaluate = ''
@@ -179,8 +169,7 @@ const EventDetails = () => {
 
 
     return (
-        <div>
-            isFetched &&
+        isFetched &&
         <Container>
             <div className="flex flex-col gap-4 pb-10">
                 <span className="cursor-pointer" onClick={() => navigate(-1)}>
@@ -190,7 +179,7 @@ const EventDetails = () => {
                 </span>
                 <div className="w-full h-[250px] rounded-md bg-secondary" />
                 <div className="flex items-center justify-between">
-                    <p className="text-muted-foreground">{format(new Date(event.date), "PPP")}</p>
+                    <p className="text-muted-foreground">{}</p>
                     <div className="flex flex-col items-center">
                         <span className="p-2 rounded-md flex items-center gap-2">
                             <Star className="w-6 h-6 text-primary" />
@@ -443,8 +432,6 @@ const EventDetails = () => {
                 </div>
             </div>
         </Container>
-        </div>
-        
     )
 }
 

@@ -19,6 +19,8 @@ import useToken from "@/hooks/useToken";
 const tabs = ["All", "Online", "Today", "This Week", "Free"];
 
 const Home = () => {
+  // const { showBoundary } = useErrorBoundary();
+  // const { isLogin, userId } = useAuth();
   const { isLogin } = useToken();
   const [tab, setTab] = useState("All");
 
@@ -31,39 +33,63 @@ const Home = () => {
     }
   });
 
-  const { data: online, isLoading: onlineLoading } = useQuery(["/events/location"], async () => {
+  // const { data: today, isLoading: todayLoading } = useQuery(["events"], async () => {
+  //   const res = await getAPI("event");
+  //   return res.data;
+  // });
+
+  // const { data: today, isLoading: todayLoading } = useQueryCache("filter/today", "/f", { date: 0 }, tab === "Today");
+  // const { data: thisWeek, isLoading: thisWeekLoading } = useQueryCache(
+  //   "filter/thisWeek",
+  //   "/f",
+  //   { date: 7 },
+  //   tab === "This Week"
+  // );
+  // const { data: online, isLoading: onlineLoading } = useQueryCache(
+  //   "filter/online",
+  //   "/location",
+  //   { loc: "isOnline", value: "online" },
+  //   tab === "Online"
+  // );
+
+  const { data: online, isLoading: onlineLoading } = async () => {
     try {
       const res = await getAPI("event?is_online=online")
       return res.data
     } catch (error) {
       throw new Error(error.response.data.message)
     }
-  });
+  };
 
-    const { data: today, isLoading: todayLoading } = useQuery(["/filter/today"], async () => {
+  // console.log(onl?ine);
+  // const { data: today, isLoading: todayLoading } = useQueryCache("filter/today", "/f", { date: 0 }, tab === "Today");
+    const { data: today, isLoading: todayLoading } = async () => {
       try {
-        const res = await getAPI(`event?thisWeek=1695986563468&endDate=1696168108871`)
+        const res = await getAPI(`event?date=1698253200000`)
         return res.data
       } catch (error) {
         throw new Error(error.response.data.message)
       }
-    });
+    };
   
   // const { data: free, isLoading: freeLoading } = useQueryCache("filter/free", "/f", { price: "free" }, tab === "Free");
 
-  const { data: free, isLoading: freeLoading } = useQuery(["/filter/free"], async () => {
+
+  const { data: free, isLoading: freeLoading } = async () => {
     try {
       const res = await getAPI("event?type=free")
       return res.data
     } catch (error) {
       throw new Error(error.response.data.message)
     }
-  });
+  };
 
-  // console.log(categories);
+  // const { data: userEvent } = useQueryCache(`event/${userId}`, "/user", { id: userId }, true);
+
   useEffect(() => {}, []);
 
   return (
+    // <Container>
     <div className={`flex flex-col w-full items-center ${isLogin && "lg:flex-row"}`}>
       <div
         className={`${
@@ -186,6 +212,7 @@ const Home = () => {
         </div>
       )}
     </div>
+    // </Container>
   );
 };
 

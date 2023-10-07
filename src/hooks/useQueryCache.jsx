@@ -11,7 +11,7 @@ export const useQueryCache = (key, q, params, isEnabled) => {
             if (cache) {
                 return cache
             }
-            const res = await services.get(`/events${q}`, { params: params })
+            const res = await services.get(`/events${+q}`, { params: params })
             return res.data.data
         },
         enabled: isEnabled

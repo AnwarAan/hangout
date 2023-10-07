@@ -78,7 +78,7 @@ const EventForm = () => {
       regency: values.location.regency,
       district: values.location.district,
       address: values.location.address,
-      date: Date.now(),
+      date: new Date(values.date).getTime(),
       time: `${values.time.hours}:${values.time.minutes} ${values.time.type.toUpperCase()}`,
     });
   };

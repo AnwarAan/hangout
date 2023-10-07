@@ -7,7 +7,7 @@ export const categories = [
         text: "Music"
     },
     {
-        value: "performingVisualArt",
+        value: "visual",
         icon: <Image />,
         text: "Performing & Visual Art"
     },

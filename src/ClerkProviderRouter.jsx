@@ -5,7 +5,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 
 import Home from "./page/Home";
 import EventDetails from "./page/event/EventDetails";
-import EventCategory from "./page/event/EventCategory";
+import EventCategory from "./page/event/CategoryMusic";
 import EventForm from "./page/form/EventForm";
 import AuthContainer from "./components/auth/SignIn";
 import ProtectedRoutes from "./components/shared/ProtectedRoutes";
