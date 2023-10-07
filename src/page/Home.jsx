@@ -77,9 +77,8 @@ const Home = () => {
   // const { data: free, isLoading: freeLoading } = useQueryCache("filter/free", "/f", { price: "free" }, tab === "Free");
 
   // const { data: userEvent } = useQueryCache(`event/${userId}`, "/user", { id: userId }, true);
-
+  console.log(tab);
   return (
-    // <Container>
     <div className={`flex flex-col w-full items-center ${isLogin && "lg:flex-row"}`}>
       <div
         className={`${
@@ -121,8 +120,9 @@ const Home = () => {
                 )}
               </div>
             </TabsContent>
-            <TabsContent value="Online">
-              {/* <div className="p-2 grid grid-cols-4 gap-4">
+            {tabs === "Online" ? (
+              <TabsContent value="Online">
+                {/* <div className="p-2 grid grid-cols-4 gap-4">
                 {onlineLoading ? (
                   <Skeleton className="bg-secondary w-[260px] h-[100px]" />
                 ) : online.length > 0 ? (
@@ -135,7 +135,10 @@ const Home = () => {
                   <NoResources text="no online events" />
                 )}
               </div> */}
-            </TabsContent>
+              </TabsContent>
+            ) : (
+              ""
+            )}
             <TabsContent value="Today">
               {/* <div className="p-2 grid grid-cols-4 gap-4">
                 {todayLoading ? (
@@ -197,14 +200,10 @@ const Home = () => {
             </div>
 
             {isLogin ? <MyEvent /> : ""}
-            {/* <div className="rounded-md shadow-sm h-10 bg-background p-2 w-full flex flex-col gap-2">
-              {userEvent && userEvent.slice(0, 3).map((event) => <UserCard key={event.id} event={event} />)}
-            </div> */}
           </div>
         </div>
       )}
     </div>
-    // </Container>
   );
 };
 
