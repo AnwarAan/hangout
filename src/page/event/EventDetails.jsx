@@ -60,6 +60,30 @@ const EventDetails = () => {
       ? reviews.reduce((acc, curr) => acc + (curr.rating ? curr.rating : 0), 0) /
         reviews.filter((review) => review.rating !== null).length
       : -1;
+// =======
+//     // const { data: event, isFetched } = useQuery(
+//     //     {
+
+//     //         queryKey: ["event", eventId],
+//     //         queryFn: async () => {
+//     //             const res = await services.get(`/events/${eventId}`)
+//     //             return res.data
+//     //         },
+//     //         refetchInterval: 1000
+//     //     }
+//     // )
+
+//     const { data, isLoading } = useQuery([`/category/${categoryBusiness}`], async () => {
+//         try {
+//           const res = await getAPI(`event?category=business`)
+//           return res.data; 
+//         } catch (error) {
+//           throw new Error(error.response.data.message)
+//         }
+//       });      
+      
+//     const eventRating = isFetched && event.reviews.length > 0 ? event.reviews.reduce((acc, curr) => acc + (curr.rating ? curr.rating : 0), 0) / event.reviews.filter(review => review.rating !== null).length : -1
+// >>>>>>> 2-event-disc
 
   let ratingEvaluate = "";
   if (eventRating > 0 && eventRating <= 1.0) {
@@ -282,7 +306,6 @@ const EventDetails = () => {
                     ) : (
                       <p className=" font-bold text-lg">{event.type === "paid" ? FormatToIDR(price) : event.type}</p>
                     )}
-
                     <Dialog>
                       <DialogTrigger>
                         {!isLogin ? (

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const userCard = ({ event }) => {
   const icons = categories.filter((category) => category.value === event.category)[0];
-
+  console.log(icons);
   return (
     <div className="flex items-center justify-between border border-border p-2 rounded-md">
       <div className="flex gap-2 items-center">

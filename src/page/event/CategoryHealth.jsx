@@ -9,25 +9,35 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { useQueryCache } from "@/hooks/useQueryCache"
 import { ArrowLeft } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { categories } from "../../../constant"
+import { categories } from "../../../constant/index.jsx"
 import { Skeleton } from "@/components/ui/skeleton"
+import { getAPI } from "@/api/api"
 import NoResources from "@/components/shared/NoResources"
+import { useQuery } from "@tanstack/react-query"
 
 const CategoryPage = () => {
-    const { eventCategory } = useParams()
+    const { categoryHealth } = useParams()
     const [select, setSelect] = useState('today')
     const [isCalendarOpen, setIsCalendarOpen] = useState(false)
     const ref = useRef(null)
     const navigate = useNavigate()
 
-    const currentCategory = categories.filter(category => category.value === eventCategory)[0]
+    // const currentCategory = categories.filter(category => category.value === eventCategory)[0]
 
-    // TODO: filtering data based on date
-    const { data, isLoading } = useQueryCache(`category/${eventCategory}`, '/f', { category: eventCategory }, Boolean(eventCategory))
+    // TODO: filtering data based on date    
+    const { data, isLoading } = useQuery([`/category/${categoryHealth}`], async () => {
+        try {
+          const res = await getAPI(`event?category=health`)
+        //   const currentCategory = res.filter(category => category.value === eventCategory)[0]
+        //   return currentCategory;
+          return res.data; 
+        } catch (error) {
+          throw new Error(error.response.data.message)
+        }
+      });      
 
     useEffect(() => {
         const clickOutside = (e) => {
@@ -41,12 +51,13 @@ const CategoryPage = () => {
         return () => {
             document.removeEventListener('mousedown', clickOutside)
         }
-
     }, [])
+    
+    // console.log(categories);
 
     return (
-        <Container>
-            <span className="cursor-pointer" onClick={() => navigate(-1)}>
+        <div>
+           <span className="cursor-pointer" onClick={() => navigate(-1)}>
                 <span className="flex items-center gap-2">
                     <ArrowLeft className="text-primary w-4 h-4" /> <p className="hover:underline text-muted-foreground hover:text-foreground">back</p>
                 </span>
@@ -54,8 +65,8 @@ const CategoryPage = () => {
             <div className="w-full bg-secondary mt-4 h-[250px] rounded-md">
                 <div className="w-full mx-auto flex items-center h-full">
                     <div className=" flex flex-col justify-center px-8 gap-2">
-                        <h1 className="text-6xl font-extrabold text-primary max-w-[800px]">{`${currentCategory.text} Events`}</h1>
-                        <p className="text-primary">{`Discover the best ${currentCategory.text} events in your area and online`}</p>
+                        <h1 className="text-6xl font-extrabold text-primary max-w-[800px]">{`Events`}</h1>
+                        <p className="text-primary">{`Discover the best events in your area and online`}</p>
                     </div>
                 </div>
             </div>
@@ -88,11 +99,11 @@ const CategoryPage = () => {
                             <Skeleton className="w-10 h-10 rounded-md bg-secondary" />
                             : data.length > 0 ?
                                 data.map(event => (<div key={event.id}><EventCard event={event} /></div>))
-                                : <NoResources text={`no ${currentCategory.text} Events`} />
+                                : <NoResources text={`no Events`} />
                     }
                 </div>
             </div>
-        </Container >
+        </div>
     )
 }
 
